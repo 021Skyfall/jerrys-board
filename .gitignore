@@ -1,0 +1,15 @@
+# Compiled output
+/target/
+
+# Log files
+*.log
+
+# IDE files (IntelliJ)
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+
+# Sensitive properties file
+src/main/resources/db.properties

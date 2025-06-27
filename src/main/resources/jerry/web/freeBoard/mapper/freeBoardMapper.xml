@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jerry.web.freeBoard.mapper.FreeBoardMapper">
+	<!-- 전체 페이지 수 조회 -->
+	<select id="getBoardCount" parameterType="jerry.web.freeBoard.pagination.Paging" resultType="int">
+        SELECT COUNT(*)
+        FROM FREEBOARD
+        <where>
+            <choose>
+            	<when test='searchType == "1" and keyword != null and keyword != ""'>
+             	  	AND CODE_TYPE = #{keyword}
+           	 	</when>
+          	  	<when test='searchType == "2" and keyword != null and keyword != ""'>
+                	AND NUM = #{keyword}
+            	</when>
+            	<when test='searchType == "3" and keyword != null and keyword != ""'>
+                	AND NAME LIKE '%' || #{keyword} || '%'
+            	</when>
+            	<when test='searchType == "4" and keyword != null and keyword != ""'>
+                	AND TITLE LIKE '%' || #{keyword} || '%'
+            	</when>
+            	<when test='searchType == "5" and keyword != null and keyword != ""'>
+                	AND CONTENT LIKE '%' || #{keyword} || '%'
+            	</when>
+            	<when test='searchType == "6" and startDate != null and startDate != "" and endDate != null and endDate != ""'>
+                	AND TO_CHAR(REGDATE, 'YYYYMMDD') BETWEEN #{startDate} AND #{endDate}
+            	</when>
+            </choose>
+        </where>
+    </select>
+	
+	<select id="freeBoardGetList" parameterType="jerry.web.freeBoard.pagination.Paging" resultType="jerry.web.freeBoard.dto.FreeBoardDto"> <!-- resultType=".web.board.dto.BoardDto" -->
+    SELECT * FROM 
+    	(SELECT a.*, ROWNUM AS rn FROM
+    		(SELECT DECODE(CODE_TYPE, '01', '자유', '02', '익명', '03', 'QnA') AS CODE_TYPE,
+    		NUM, NAME, TITLE, CONTENT, TO_CHAR(REGDATE , 'YYYYMMDD') AS REGDATE
+    		FROM FREEBOARD
+    			<where>
+        			<choose>
+            			<when test='searchType == "1" and keyword != null and keyword != ""'>
+             	   			AND CODE_TYPE = #{keyword}
+           	 			</when>
+          	  			<when test='searchType == "2" and keyword != null and keyword != ""'>
+                			AND NUM = #{keyword}
+            			</when>
+            			<when test='searchType == "3" and keyword != null and keyword != ""'>
+                			AND NAME LIKE '%' || #{keyword} || '%'
+            			</when>
+            			<when test='searchType == "4" and keyword != null and keyword != ""'>
+                			AND TITLE LIKE '%' || #{keyword} || '%'
+            			</when>
+            			<when test='searchType == "5" and keyword != null and keyword != ""'>
+                			AND CONTENT LIKE '%' || #{keyword} || '%'
+            			</when>
+            			<when test='searchType == "6" and startDate != null and startDate != "" and endDate != null and endDate != ""'>
+                			AND TO_CHAR(REGDATE, 'YYYYMMDD') BETWEEN #{startDate} AND #{endDate}
+            			</when>
+            		</choose>
+    			</where>
+    			ORDER BY NUM ASC
+    		) a
+    	) b
+    	WHERE rn BETWEEN #{firstRow} AND #{lastRow}
+    </select>
+
+	<insert id="freeBoardInsertPro" parameterType="jerry.web.freeBoard.dto.FreeBoardDto" useGeneratedKeys="true" keyProperty="num">
+		INSERT INTO FREEBOARD(NUM, CODE_TYPE, TITLE, NAME, REGDATE, CONTENT)
+		VALUES(NUM.NEXTVAL, #{codeType}, #{title}, #{name}, SYSDATE, #{content})
+		
+		<selectKey keyProperty="num" resultType="int" order="AFTER">
+       		SELECT num.CURRVAL FROM DUAL
+  		</selectKey>
+	</insert>
+
+	<select id="freeBoardDetailByNum" resultType="freeBoardDto" parameterType="int">
+		SELECT NUM, TITLE, NAME, TO_CHAR(REGDATE,'YYYY/MM/DD') REGDATE, CONTENT FROM FREEBOARD
+		WHERE NUM=#{num}
+	</select>
+
+	<select id="freeBoardNewNum" resultType="int">
+		SELECT MAX(NUM)
+		FROM FREEBOARD
+	</select>
+
+	<update id="freeBoardModify" parameterType="freeBoardDto">
+		UPDATE FREEBOARD
+		SET CODE_TYPE = #{codeType}, 
+			TITLE = #{title}, 
+			CONTENT = #{content}
+		WHERE NUM = #{num}
+
+	</update>
+
+	<update id="freeBoardDelete" parameterType="int">
+		DELETE FROM FREEBOARD
+		WHERE NUM
+		= #{num}
+
+	</update>
+	
+	<delete id="freeBoardDeleteAll" parameterType="java.util.List">
+		DELETE FROM FREEBOARD
+		WHERE NUM IN
+		<foreach collection="list" item="item" open="(" close=")" separator=",">
+		 #{item}
+		</foreach>
+
+	</delete>
+
+</mapper>
