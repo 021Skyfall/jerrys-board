@@ -35,7 +35,7 @@
                 <input type="hidden" id="pkNum" name="num" value="${freeBoardDto.num}" />
 
                 <%-- 상세 내용을 테이블로 표시 --%>
-                <table>
+                <table class="form-table">
                     <tbody>
                         <tr>
                             <th>타입</th>
@@ -66,7 +66,7 @@
                 <div class="actions-bar">
                     <input type="button" id="modifyBtn" value="수정" >
                     <input type="button" id="deleteBtn" value="삭제" >
-                    <a href="${contextPath}/freeBoardMain"><button type="button">목록</button></a>
+                    <input type="button" class="toListBtn" value="목록" onclick="location.href='${contextPath}/freeBoardMain'">
                 </div>
             </form>
         </main>

@@ -32,7 +32,7 @@
             <h1 class="main-title">새 글 작성</h1>
 
             <form id="fm" onsubmit="return false;">
-                <table>
+                <table class="form-table">
                     <tbody>
                         <tr>
                             <%-- 라벨은 th로 변경하여 스타일 자동 적용 --%>

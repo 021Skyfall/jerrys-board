@@ -34,11 +34,11 @@
             <h1 class="main-title">자유게시판</h1>
 
             <div class="actions-bar">
-               <a href="${contextPath}/freeBoardInsert"><button type="button">글쓰기</button></a>
+               <a href="${contextPath}/freeBoardInsert" class="btn">글쓰기</a>
             </div>
 
             <%-- 게시판 목록 테이블 --%>
-            <table>
+            <table class="board-list">
                 <thead>
                     <tr>
                         <th><input type="checkbox" id="chkAll"></th>
